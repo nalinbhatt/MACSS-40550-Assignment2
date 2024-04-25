@@ -1,6 +1,6 @@
 import mesa
 
-from agent import PDAgent
+from .agent import PDAgent
 
 
 class PdGrid(mesa.Model):
@@ -18,7 +18,7 @@ class PdGrid(mesa.Model):
     payoff = {("C", "C"): 1, ("C", "D"): 0, ("D", "C"): 1.6, ("D", "D"): 0}
 
     def __init__(
-        self, width=50, height=50, schedule_type="Random", payoffs=None, seed=None
+        self, width=50, height=50, schedule_type="Random", payoffs=None, seed=None, radius=1
     ):
         """
         Create a new Spatial Prisoners' Dilemma Model.
@@ -33,6 +33,7 @@ class PdGrid(mesa.Model):
         self.grid = mesa.space.SingleGrid(width, height, torus=True)
         self.schedule_type = schedule_type
         self.schedule = self.schedule_types[self.schedule_type](self)
+        self.radius = radius
 
         # Create agents
         for x in range(width):
@@ -50,7 +51,7 @@ class PdGrid(mesa.Model):
                 
             }
         )
-
+ 
         self.running = True
         self.datacollector.collect(self)
 

@@ -14,6 +14,9 @@ model_params = {
         value="Random",
         choices=list(PdGrid.schedule_types.keys()),
     ),
+    "radius": mesa.visualization.Slider(
+        name="Search Radius", value=1, min_value=1, max_value=25, step=1
+    ),
 }
 
 server = mesa.visualization.ModularServer(

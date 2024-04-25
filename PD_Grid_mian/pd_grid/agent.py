@@ -1,10 +1,10 @@
 import mesa
-
+import csv
 
 class PDAgent(mesa.Agent):
     """Agent member of the iterated, spatial prisoner's dilemma model."""
 
-    def __init__(self, pos, model, starting_move=None):
+    def __init__(self, pos, model, starting_move=None, count=0):
         """
         Create a new Prisoner's Dilemma agent.
 
@@ -18,13 +18,22 @@ class PDAgent(mesa.Agent):
         self.pos = pos
         self.score = 0
         self.increment = 0
+        self.count = count
         
         if starting_move:
             self.move = starting_move
         else:
+            #self.random.seed(self.model.next_id())
             self.move = self.random.choice(["C", "D"])
         self.next_move = None
-
+        
+        with open('initial_move.csv', mode='a', newline='') as file:
+                writer = csv.writer(file)
+                #writer.writerow(['My Position', 'Best Neighbor Position', 'Best Neighbor Score'])
+                writer.writerow([self.pos, self.move, self.score])
+                #print(f"my pos: {self.pos}, best neighbor pos: {best_neighbor.pos}, best neighbor score: {best_neighbor.score}")
+        
+ 
     @property
     def isCooroperating(self):
         return self.move == "C"
@@ -33,11 +42,21 @@ class PDAgent(mesa.Agent):
         """Get the best neighbor's move, and change own move accordingly
         if better than own score."""
 
-        neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True)
+        neighbors = self.model.grid.get_neighbors(self.pos, True, include_center=True, radius = self.model.radius)
+        #print(len(neighbors))
         best_neighbor = max(neighbors, key=lambda a: a.score)
         self.next_move = best_neighbor.move
+        self.count+=1
+        if self.count == 1:
+            #print(f"my pos: {self.pos}, best neighbor pos: {best_neighbor.pos}, best neighbor score: {best_neighbor.score}")
+            with open('output.csv', mode='a', newline='') as file:
+                writer = csv.writer(file)
+                #writer.writerow(['My Position', 'Best Neighbor Position', 'Best Neighbor Score'])
+                writer.writerow([f"{self.pos}, neighbors:{len(neighbors)}, best: {best_neighbor.pos}, {best_neighbor.move}, {best_neighbor.score}"])
+                #print(f"my pos: {self.pos}, best neighbor pos: {best_neighbor.pos}, best neighbor score: {best_neighbor.score}")
+        
 
-
+ 
         if self.model.schedule_type != "Simultaneous":
             self.advance()
 
