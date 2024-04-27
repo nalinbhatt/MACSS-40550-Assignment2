@@ -1,6 +1,6 @@
 import mesa
 
-from agent import PDAgent
+from .agent import PDAgent
 
 
 class PdGrid(mesa.Model):
@@ -18,7 +18,7 @@ class PdGrid(mesa.Model):
     payoff = {("C", "C"): 1, ("C", "D"): 0, ("D", "C"): 1.6, ("D", "D"): 0}
 
     def __init__(
-        self, width=50, height=50, schedule_type="Random", payoffs=None, seed=None
+        self, width=50, height=50, schedule_type="Random", payoffs=None, seed=None, radius=1,
     ):
         """
         Create a new Spatial Prisoners' Dilemma Model.
@@ -33,6 +33,7 @@ class PdGrid(mesa.Model):
         self.grid = mesa.space.SingleGrid(width, height, torus=True)
         self.schedule_type = schedule_type
         self.schedule = self.schedule_types[self.schedule_type](self)
+        self.radius = radius
 
         # Create agents
         for x in range(width):
@@ -42,15 +43,31 @@ class PdGrid(mesa.Model):
                 self.schedule.add(agent)
 
         self.datacollector = mesa.DataCollector(
-            {
+            model_reporters = {
                 "Cooperating_Agents": lambda m: len(
                     [a for a in m.schedule.agents if a.move == "C"]
                 ),
                 "total_pay_off": lambda m: sum([a.increment for a in m.schedule.agents]),
-                
+            },
+            agent_reporters = {
+                "pos": "pos", 
+                "score": "score", 
+                "increment": "increment",
+                "count": "count", 
+                "current_best_neighbor_move": "current_best_neighbor_move",
+                "current_best_neighbor_pos": "current_best_neighbor_pos",
+                "current_best_neighbor_score":"current_best_neighbor_score"
             }
         )
 
+        # self.datacollector_agent = mesa.DataCollector(
+        #     model_reporters={"happy": "happy", "Avg Similarity": "similarity", 
+        #                     "seed": "_seed"},  # Model-level count of happy agents
+        #     agent_reporters={"Number of Similar Neighbors": "similar", 
+        #     "Agent type": "type"}
+        # )
+
+ 
         self.running = True
         self.datacollector.collect(self)
 
