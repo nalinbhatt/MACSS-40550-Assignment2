@@ -47,6 +47,10 @@ class PDAgent(mesa.Agent):
         if self.model.schedule_type != "Simultaneous":
             self.advance()
 
+
+    @property
+    def isCooroperating(self):
+        return self.move == "C"
         
     def advance(self):
         self.move = self.next_move
