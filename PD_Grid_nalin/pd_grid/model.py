@@ -15,7 +15,7 @@ class PdGrid(mesa.Model):
     # This dictionary holds the payoff for this agent,
     # keyed on: (my_move, other_move)
 
-    payoff = {("C", "C"): 1, ("C", "D"): 0, ("D", "C"): 1.6, ("D", "D"): 0}
+    payoff = {("C", "C"): 1, ("C", "D"): 0, ("D", "C"): 1.1, ("D", "D"): 0}
 
     def __init__(
         self, width=50, height=50, schedule_type="Random", payoffs=None, seed=None, radius=1,
